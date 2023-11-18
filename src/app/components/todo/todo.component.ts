@@ -1,4 +1,5 @@
 import { Component } from '@angular/core';
+import { Task } from 'src/app/models/task.model';
 
 @Component({
   selector: 'app-todo',
@@ -7,20 +8,38 @@ import { Component } from '@angular/core';
 })
 export class TodoComponent {
 
-  todoList: string[] = [];
-  task: string;
+  newTodo: string = '';
+  todos: Task[] = [];
 
-  constructor() {
-    this.task = "";
-    this.todoList.push('Review your schedule for the day.');
-    this.todoList.push('Check and respond to emails during dedicated times.');
-    this.todoList.push('Stretch or practice yoga for flexibility.');
-    this.todoList.push('Plan for the next day by organizing tasks and priorities.');
+  addTodo() {
+    if (this.newTodo.trim() !== '') {
+      this.todos.push( new Task(this.newTodo,false,false) );
+      this.newTodo = '';
+    }
   }
 
-  addShoppingItem() {
-    this.todoList.push(this.task);
-    this.task = "";
+  completeTodo(todo: Task) {
+    todo.completed = !todo.completed;
+  }
+
+  postponeTodo(todo: Task) {
+    todo.postponed = !todo.postponed;
+  }
+
+  deleteTodo(todo: Task) {
+    this.todos = this.todos.filter((t) => t !== todo);
+  }
+
+  cleanCompleted() {
+    this.todos = this.todos.filter((todo) => !todo.completed);
+  }
+
+  restorePostponed() {
+    this.todos.forEach((todo) => (todo.postponed = false));
+  }
+
+  filteredTodos(): Task[] {
+    return this.todos.filter((todo) => !todo.postponed);
   }
 
 }
